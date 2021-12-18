@@ -6,7 +6,19 @@ logging.basicConfig(filename="../log.txt", level=logging.INFO)
 
 #Maps from user_id and name to profiles
 __profiles = dict()
-
+usageScript = """Commands '!<>':\n
+usage: shows what each command does\n
+register: starts tracking when the sender is spotted or spots\n
+unregister: stops tracking when the sender is spotted or spots and removes all counts of spotting or being spotted\n
+members: shows who is registered\n
+leaderboard: shows registered members in descending order by spots\n
+\n
+Spotting:\n
+In order to properly spot someone, the word 'Spotted' or 'spotted'
+must present in the message and those who are spotted must be @.\n
+Both the spotter and the spotted must be registered in order for the spot to
+appear on the leaderboard.
+"""
 #Adds a new profile for the GroupMe member to the id and alias dicts
 def registerMember(id, alias):
     newMember = Profile(id, alias)
@@ -53,6 +65,18 @@ def showLeaderboard():
 
 def getter(key):
     return __profiles[key].spots
+
+def printUsage():
+    outbound.sendChat(usageScript)
+
+def changeName(text :str):
+    partition = text.partition(" changed name to ")
+    old = partition[0]
+    new = partition[2]
+    for key in __profiles:
+        if __profiles[key].alias == old:
+            __profiles[key].changeAlias(new)
+            logging.info("Change alias: '" +old+"' to: '"+new+"'")    
 
 def getMentionsFromAttachments(attachments):
     for element in attachments:

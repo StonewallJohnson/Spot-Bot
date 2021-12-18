@@ -31,8 +31,15 @@ class ChatEndpoint(Resource):
             utility.spot(MessageSchema.sender_id, mentions)
 
         if text.find("!leaderboard") != -1:
-            utility.showLeaderboard() 
-    
+            utility.showLeaderboard()
+        
+        if text.find("!usage") != -1:
+            utility.printUsage()
+
+        if nameChangeDetected(MessageSchema):
+            utility.changeName(MessageSchema.text)
+            
+        
         return "returned", 200
 
 def someoneSpotted(text, mentions):
@@ -43,6 +50,8 @@ def someoneSpotted(text, mentions):
             tagged = True
     return spotted and tagged
 
+def nameChangeDetected(message):
+    return message.sender_id == "system" and message.text.find("changed name to") != -1
 
 api.add_resource(ChatEndpoint, "/chat")
 
