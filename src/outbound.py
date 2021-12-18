@@ -1,5 +1,4 @@
 import requests
-import logging
 
 bot_id = "112476b171da9af14a7513ce1a"
 

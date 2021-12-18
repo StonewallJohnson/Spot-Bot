@@ -31,6 +31,7 @@ def unregisterMember(id, alias):
     __ids.pop(id)
     __aliases.pop(alias)
     outbound.sendChat("Unregistered: "+alias)
+    logging.info("Unregistered a member, ID: "+ id +", alias: "+ alias)
 
 def spot(spotterID, spottedIDs):
     spotter = __ids[spotterID]
@@ -44,10 +45,7 @@ def spot(spotterID, spottedIDs):
         
 
 
-def getMentionsFromAttachments(attachments: str):
-    new = attachments.replace("'", "\"")
-    data = json.loads(new)
-    print(type(data), data)
-    
-    if data["type"] == "mentions":
-        return data["user_ids"] 
+def getMentionsFromAttachments(attachments):
+    for element in attachments:
+        if element["type"] == "mentions":
+            return element["user_ids"] 
