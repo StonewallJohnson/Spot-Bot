@@ -1,49 +1,58 @@
 from profile import Profile
 import outbound
 import logging
-import json
+from operator import itemgetter
 logging.basicConfig(filename="../log.txt", level=logging.INFO)
 
 #Maps from user_id and name to profiles
-__ids = dict()
-__aliases = dict()
-
+__profiles = dict()
 
 #Adds a new profile for the GroupMe member to the id and alias dicts
 def registerMember(id, alias):
     newMember = Profile(id, alias)
-    __ids[id] = newMember
-    __aliases[alias] = newMember
+    __profiles[id] = newMember
     outbound.sendChat("Registered: "+alias+". Welcome!")
     logging.info("Registered a new member, ID: "+ id +", alias: "+ alias)
 
-
+#TODO: look to see if string concatenation is recreating the string
 #Will send a message to the chat with all registered members
 def showMembers():
     message = "Registered Members:\n"
-    for id in __ids:
+    for id in __profiles:
         #for every person in the __ids dict
-        message += __ids[id].alias + "\n"
+        message += __profiles[id].alias + "\n"
     outbound.sendChat(message)
     logging.info("Printed the registered members.")
 
 def unregisterMember(id, alias):
-    __ids.pop(id)
-    __aliases.pop(alias)
+    __profiles.pop(id)
     outbound.sendChat("Unregistered: "+alias)
     logging.info("Unregistered a member, ID: "+ id +", alias: "+ alias)
 
 def spot(spotterID, spottedIDs):
-    spotter = __ids[spotterID]
+    spotter = __profiles[spotterID]
     if spotter != None:
         for spottedID in spottedIDs:
-            spotted = __ids[spottedID]
+            spotted = __profiles[spottedID]
             if spotted != None:
                 spotter.spottedSomeone()
                 spotted.gotSpotted()
                 logging.info(spotter.alias+" spotted "+spotted.alias)
         
+def showLeaderboard():
+    message = "Leaderboard\n"
+    #sort keys into descending order based on spots belonging to that key
+    orderedKeys = sorted(__profiles, key=getter, reverse=True)
+    
+    for key in orderedKeys:
+        #for every key, append the representation of that key
+        message += repr(__profiles[key]) + "\n"
+    
+    outbound.sendChat(message)
+    logging.info("Printed leaderboard")
 
+def getter(key):
+    return __profiles[key].spots
 
 def getMentionsFromAttachments(attachments):
     for element in attachments:

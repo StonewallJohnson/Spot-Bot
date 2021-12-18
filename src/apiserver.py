@@ -28,7 +28,10 @@ class ChatEndpoint(Resource):
             utility.unregisterMember(MessageSchema.sender_id, MessageSchema.name)
         
         if someoneSpotted(text, mentions):
-            utility.spot(MessageSchema.sender_id, mentions)  
+            utility.spot(MessageSchema.sender_id, mentions)
+
+        if text.find("!leaderboard") != -1:
+            utility.showLeaderboard() 
     
         return "returned", 200
 
