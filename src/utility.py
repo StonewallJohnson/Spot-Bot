@@ -2,7 +2,7 @@ from profile import Profile
 import outbound
 import logging
 from operator import itemgetter
-logging.basicConfig(filename="../log.txt", level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 #Maps from user_id and name to profiles
 __profiles = dict()
