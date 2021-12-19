@@ -21,10 +21,11 @@ appear on the leaderboard.
 """
 #Adds a new profile for the GroupMe member to the id and alias dicts
 def registerMember(id, alias):
-    newMember = Profile(id, alias)
-    __profiles[id] = newMember
-    outbound.sendChat("Registered: "+alias+". Welcome!")
-    logging.info("Registered a new member, ID: "+ id +", alias: "+ alias)
+    if id not in __profiles.keys():
+        newMember = Profile(id, alias)
+        __profiles[id] = newMember
+        outbound.sendChat("Registered: "+alias+". Welcome!")
+        logging.info("Registered a new member, ID: "+ id +", alias: "+ alias)
 
 #TODO: look to see if string concatenation is recreating the string
 #Will send a message to the chat with all registered members
