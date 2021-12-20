@@ -12,6 +12,5 @@ __leaderboard__: shows registered members in descending order by spots
 
 ### Spotting:
 In order to properly spot someone, the word 'Spotted' or 'spotted'
-must present in the message and those who are spotted must be @.
-Both the spotter and the spotted must be registered in order for the spot to
-appear on the leaderboard.
+must be present in the message and those who are spotted must be @.
+Both the spotter and the spotted must be registered in order for the spot to appear on the leaderboard.
