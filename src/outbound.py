@@ -1,6 +1,7 @@
+import sys
 import requests
 
-bot_id = "112476b171da9af14a7513ce1a"
+bot_id = sys.argv[1]
 
 def sendChat(message):
     body = {
