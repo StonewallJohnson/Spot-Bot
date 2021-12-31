@@ -12,4 +12,4 @@ RUN pip install -r requirements.txt
 #Run the server
 WORKDIR /usr/src/app/src
 EXPOSE 50000
-CMD ["python", "apiserver.py"]
+CMD ["python", "apiserver.py", "$BOT_ID"]
