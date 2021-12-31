@@ -56,5 +56,4 @@ def nameChangeDetected(message):
 api.add_resource(ChatEndpoint, "/chat")
 
 if __name__ == '__main__':
-    open("../log.txt", "w").close()
     app.run(host="0.0.0.0", port=50000)
