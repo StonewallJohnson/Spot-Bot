@@ -1,10 +1,28 @@
 from profile import Profile
 import outbound
 import logging
+import json
+import sys
+import os
 logging.basicConfig(level=logging.INFO)
 
+
+
+BACKUP_FOLDER_PATH = "./backup"
+##Reads the profiles from the backup file and updates the __profiles map
+def readProfiles():
+    profs = dict()
+    for filename in os.listdir(BACKUP_FOLDER_PATH):
+        filepath = os.path.join(BACKUP_FOLDER_PATH, filename)
+        file = open(filepath, "r")
+        varMap = json.load(file)
+        profs[varMap["id"]] = Profile(varMap["id"], varMap["alias"], varMap["spotted"], varMap["spots"])
+        file.close()
+    return profs
 #Maps from user_id and name to profiles
 __profiles = dict()
+if len(sys.argv) == 3 and sys.argv[2] == "t":
+    __profiles = readProfiles()
 usageScript = """Commands '!<>':\n
 usage: shows what each command does\n
 register: starts tracking when the sender is spotted or spots\n
@@ -14,10 +32,11 @@ leaderboard: shows registered members in descending order by spots\n
 \n
 Spotting:\n
 In order to properly spot someone, the word 'Spotted' or 'spotted'
-must present in the message and those who are spotted must be @.\n
+must be present in the message and those who are spotted must be @.\n
 Both the spotter and the spotted must be registered in order for the spot to
 appear on the leaderboard.
 """
+
 #Adds a new profile for the GroupMe member to the id and alias dicts
 def registerMember(id, alias):
     if id not in __profiles.keys():
@@ -82,3 +101,21 @@ def getMentionsFromAttachments(attachments):
     for element in attachments:
         if element["type"] == "mentions":
             return element["user_ids"] 
+
+##Writes the profiles in the profile map to a file for backup
+def writeProfiles():
+    #write profiles as json into files
+    for key in __profiles:
+        prof = __profiles[key]
+        file = open(BACKUP_FOLDER_PATH + "/" + prof.alias + ".txt", "w")
+        varMap = {
+            "id" : prof.id,
+            "alias" : prof.alias,
+            "spotted" : prof.spotted,
+            "spots" : prof.spots
+        }
+        print(varMap)
+        json.dump(varMap, file)
+        file.close()
+
+    logging.info("Backed up...")

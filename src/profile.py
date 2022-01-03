@@ -1,10 +1,10 @@
 class Profile:
-    def __init__(self, name, alias):
-        self.id = name
+    def __init__(self, id, alias, spotted = 0, spots = 0):
+        self.id = id
         self.alias = alias
-        self.spotted = 0
-        self.spots = 0
-    
+        self.spotted = spotted
+        self.spots = spots
+        
     def changeAlias(self, alias):
         self.alias = alias
     

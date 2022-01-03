@@ -10,6 +10,6 @@ COPY . .
 RUN pip install -r requirements.txt
 
 #Run the server
-WORKDIR /usr/src/app/src
+WORKDIR ./src
 EXPOSE 50000
-CMD ["python", "apiserver.py", "$BOT_ID"]
+ENTRYPOINT ["python", "apiserver.py"]

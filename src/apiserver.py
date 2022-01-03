@@ -1,5 +1,5 @@
 from flask import Flask, request
-from flask_restful import Resource, Api, reqparse
+from flask_restful import Resource, Api
 from marshmallow import Schema, fields
 import utility
 
@@ -42,6 +42,12 @@ class ChatEndpoint(Resource):
         
         return "returned", 200
 
+class Backup(Resource):
+    def get(self):
+        utility.writeProfiles()
+        return "backed up", 200
+
+
 def someoneSpotted(text, mentions):
     spotted = False
     tagged = False
@@ -54,6 +60,7 @@ def nameChangeDetected(message):
     return message.sender_id == "system" and message.text.find("changed name to") != -1
 
 api.add_resource(ChatEndpoint, "/chat")
+api.add_resource(Backup, "/backup")
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=50000)

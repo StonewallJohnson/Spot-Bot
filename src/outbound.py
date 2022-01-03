@@ -8,5 +8,4 @@ def sendChat(message):
         "bot_id" : bot_id,
         "text" : message,
     }
-    response = requests.post("https://api.groupme.com/v3/bots/post", json=body)    
-    print(response)
+    response = requests.post("https://api.groupme.com/v3/bots/post", json=body)
