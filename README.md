@@ -1,3 +1,7 @@
+# Spot Bot
+This repository contains the API code for a GroupMe bot. This API allows the GroupMe bot to send the messages of the chat to,
+reads the messages, then looks for any command sequences or spots and keeps track of who spots or gets spotted. 
+
 # Usage
 ### Commands '!<>':
 __usage__: shows what each command does
