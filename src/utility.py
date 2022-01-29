@@ -1,28 +1,16 @@
 from profile import Profile
 import outbound
 import logging
-import json
-import sys
-import os
 logging.basicConfig(level=logging.INFO)
 
 
 
-BACKUP_FOLDER_PATH = "./backup"
 ##Reads the profiles from the backup file and updates the __profiles map
-def readProfiles():
-    profs = dict()
-    for filename in os.listdir(BACKUP_FOLDER_PATH):
-        filepath = os.path.join(BACKUP_FOLDER_PATH, filename)
-        file = open(filepath, "r")
-        varMap = json.load(file)
-        profs[varMap["id"]] = Profile(varMap["id"], varMap["alias"], varMap["spotted"], varMap["spots"])
-        file.close()
-    return profs
 #Maps from user_id and name to profiles
 __profiles = dict()
-if len(sys.argv) == 3 and sys.argv[2] == "t":
-    __profiles = readProfiles()
+BACKUP_FILE_PATH = "backup.txt"
+
+
 usageScript = """Commands '!<>':\n
 usage: shows what each command does\n
 register: starts tracking when the sender is spotted or spots\n
@@ -38,9 +26,9 @@ appear on the leaderboard.
 """
 
 #Adds a new profile for the GroupMe member to the id and alias dicts
-def registerMember(id, alias):
+def registerMember(id, alias, spotted = 0, spots = 0):
     if id not in __profiles.keys():
-        newMember = Profile(id, alias)
+        newMember = Profile(id, alias, spotted, spots)
         __profiles[id] = newMember
         outbound.sendChat("Registered: "+alias+". Welcome!")
         logging.info("Registered a new member, ID: "+ id +", alias: "+ alias)
@@ -102,20 +90,35 @@ def getMentionsFromAttachments(attachments):
         if element["type"] == "mentions":
             return element["user_ids"] 
 
-##Writes the profiles in the profile map to a file for backup
-def writeProfiles():
-    #write profiles as json into files
+
+def restoreFromBackup(filePath):
+    print("Restoring from " + filePath)
+    file = open(filePath)
+    info = file.readline().strip()
+    
+    while(info):
+        #for each person backed up, make profile and map
+        print("got " + info)
+        vars = info.split(",")
+        newMember = Profile(vars[0], vars[1], int(vars[2]), int(vars[3]))
+        __profiles[vars[0]] = newMember
+        info = file.readline().strip()
+    file.close()
     for key in __profiles:
         prof = __profiles[key]
-        file = open(BACKUP_FOLDER_PATH + "/" + prof.alias + ".txt", "w")
-        varMap = {
-            "id" : prof.id,
-            "alias" : prof.alias,
-            "spotted" : prof.spotted,
-            "spots" : prof.spots
-        }
-        print(varMap)
-        json.dump(varMap, file)
-        file.close()
+        print(prof.id + prof.alias + repr(prof.spotted) + repr(prof.spots) + "\n")
 
-    logging.info("Backed up...")
+def writeBackup():
+    file = open(BACKUP_FILE_PATH, "w")
+    for key in __profiles:
+        #for every registered member
+        str = ""
+        prof = __profiles[key]
+        str += prof.id + ","
+        str += prof.alias + ","
+        str += repr(prof.spotted) + ","
+        str += repr(prof.spots) + "\n"
+        file.write(str)
+    file.close()
+
+

@@ -15,4 +15,4 @@ class Profile:
         self.spotted += 1
     
     def __repr__(self):
-        return self.alias+ "\n\tspots:"+repr(self.spots)+"\tspotted:"+repr(self.spotted)
+        return self.alias+ "\n\tspots: "+repr(self.spots)+"\tspotted: "+repr(self.spotted)
