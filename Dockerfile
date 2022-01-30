@@ -5,7 +5,6 @@ WORKDIR /usr/src/app
 
 #Copy files in this directory to work dir
 COPY . .
-RUN mkdir mount_folder
 #Install dependencies
 RUN pip install -r requirements.txt
 

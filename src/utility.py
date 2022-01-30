@@ -98,15 +98,11 @@ def restoreFromBackup(filePath):
     
     while(info):
         #for each person backed up, make profile and map
-        print("got " + info)
         vars = info.split(",")
         newMember = Profile(vars[0], vars[1], int(vars[2]), int(vars[3]))
         __profiles[vars[0]] = newMember
         info = file.readline().strip()
     file.close()
-    for key in __profiles:
-        prof = __profiles[key]
-        print(prof.id + prof.alias + repr(prof.spotted) + repr(prof.spots) + "\n")
 
 def writeBackup():
     file = open(BACKUP_FILE_PATH, "w")
