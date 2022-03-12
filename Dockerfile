@@ -9,6 +9,6 @@ COPY . .
 RUN pip install -r requirements.txt
 
 #Run the server
-WORKDIR ./src
+WORKDIR src
 EXPOSE 50000
 ENTRYPOINT ["python", "apiserver.py"]
