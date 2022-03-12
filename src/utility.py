@@ -8,8 +8,8 @@ logging.basicConfig(level=logging.INFO)
 ##Reads the profiles from the backup file and updates the __profiles map
 #Maps from user_id and name to profiles
 __profiles = dict()
-BACKUP_FILE_PATH = "backup.txt"
-
+BACKUP_FILE_PATH = "aux_file/backup.txt"
+BOT_ID = ""
 
 usageScript = """Commands '!<>':\n
 usage: shows what each command does\n
@@ -91,9 +91,9 @@ def getMentionsFromAttachments(attachments):
             return element["user_ids"] 
 
 
-def restoreFromBackup(filePath):
-    print("Restoring from " + filePath)
-    file = open(filePath)
+def restoreFromBackup():
+    print("Restoring from " + BACKUP_FILE_PATH)
+    file = open(BACKUP_FILE_PATH)
     info = file.readline().strip()
     
     while(info):

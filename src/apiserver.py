@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 from marshmallow import Schema
-import sys
+import argparse
 import utility
 
 #Flask wizardry
@@ -62,20 +62,17 @@ def nameChangeDetected(message):
 api.add_resource(ChatEndpoint, "/chat")
 api.add_resource(BackupEndpoint, "/back_me_up")
 
-bot_id = None
 ##ENTRYPOINT
 if __name__ == '__main__':
-    args = len(sys.argv)
-    if args > 3 or args < 2:
-        exit("Usage: apiserver.py <bot_id> <OPTIONAL: relative backup file path>")
-    
-    if sys.argv[1] == None:
-        exit("Need a bot id to post to!")
-    else:
-        bot_id = sys.argv[1]
-    
-    if args == 3:
-        if sys.argv[2] != None:
-            utility.restoreFromBackup(sys.argv[2])
+    parser = argparse.ArgumentParser(description="Starts the server that posts to a given bot id.")
+    parser.add_argument("bot_id")
+    parser.add_argument("--fromBackup", action="store_true")
         
+    namespace = parser.parse_args()
+    argsDict = vars(namespace)
+
+    utility.BOT_ID = namespace.bot_id
+    if namespace.fromBackup:
+        utility.restoreFromBackup()
+
     app.run(host="0.0.0.0", port=50000)
