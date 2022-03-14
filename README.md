@@ -22,4 +22,4 @@ must be present in the message and those who are spotted must be @.
 Both the spotter and the spotted must be registered in order for the spot to appear on the leaderboard.
 
 # Startup
-python apiserver.py *<GroupMe bot_id>* *<Optional: relative path backup file path>* 
+python apiserver.py <GroupMe bot_id> <Optional: relative path backup file path> 
