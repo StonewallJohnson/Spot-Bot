@@ -64,8 +64,8 @@ def showLeaderboard():
     orderedKeys = sorted(__profiles, key=getter, reverse=True)
     
     for key in orderedKeys:
-        #for every key, append the representation of that key
-        message += repr(__profiles[key]) + "\n"
+        #for every key, append the leaderboard info of that key
+        message += __profiles[key].leaderboardInfo() + "\n"
     
     outbound.sendChat(message)
     logging.info("Printed leaderboard")

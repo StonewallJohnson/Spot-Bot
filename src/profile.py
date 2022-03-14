@@ -13,6 +13,16 @@ class Profile:
 
     def gotSpotted(self):
         self.spotted += 1
+
+    def getSpotRatio(self):
+        if self.spotted == 0:
+            return -1
+        else:
+            return self.spots / self.spotted
+
+    def getNetSpots(self):
+        return self.spots - self.spotted
     
-    def __repr__(self):
-        return self.alias+ "\n\tspots: "+repr(self.spots)+" \tspotted: "+repr(self.spotted)
+    def leaderboardInfo(self):
+        return """{}
+        spots: {}   spotted: {}""".format(self.alias, self.spots, self.spotted)

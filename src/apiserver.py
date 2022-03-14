@@ -43,7 +43,7 @@ class ChatEndpoint(Resource):
         
         return "returned", 200
 
-class BackupEndpoint(Resource):
+class ControlEndpoint(Resource):
     def get(self):
         utility.writeBackup()
         return "Backed up profiles", 200
@@ -60,7 +60,7 @@ def nameChangeDetected(message):
     return message.sender_id == "system" and message.text.find("changed name to") != -1
 
 api.add_resource(ChatEndpoint, "/chat")
-api.add_resource(BackupEndpoint, "/back_me_up")
+api.add_resource(ControlEndpoint, "/control")
 
 ##ENTRYPOINT
 if __name__ == '__main__':
