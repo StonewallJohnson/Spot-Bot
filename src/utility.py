@@ -11,18 +11,17 @@ __profiles = dict()
 BACKUP_FILE_PATH = "aux_file/backup.txt"
 BOT_ID = ""
 
-usageScript = """Commands '!<>':\n
-usage: shows what each command does\n
-register: starts tracking when the sender is spotted or spots\n
-unregister: stops tracking when the sender is spotted or spots and removes all counts of spotting or being spotted\n
-members: shows who is registered\n
-leaderboard: shows registered members in descending order by spots\n
-\n
-Spotting:\n
-In order to properly spot someone, the word 'Spotted' or 'spotted'
-must be present in the message and those who are spotted must be @.\n
-Both the spotter and the spotted must be registered in order for the spot to
-appear on the leaderboard.
+usageScript = """Commands '!<>':
+usage: shows what each command does
+register: starts tracking when the sender is spotted or spots
+unregister: stops tracking when the sender is spotted or spots and removes all counts of spotting or being spotted
+members: shows who is registered
+leaderboard: shows registered members in descending order by spots
+streaks: shows the spot streak of registered members
+
+Spotting:
+In order to properly spot someone, the word 'Spotted' or 'spotted' must be present in the message and those who are spotted must be @.
+Both the spotter and the spotted must be registered in order for the spot to appear on the leaderboard.
 """
 
 #Adds a new profile for the GroupMe member to the id and alias dicts
@@ -61,7 +60,7 @@ def spot(spotterID, spottedIDs):
 def showLeaderboard():
     message = "Leaderboard\n"
     #sort keys into descending order based on spots belonging to that key
-    orderedKeys = sorted(__profiles, key=getter, reverse=True)
+    orderedKeys = sorted(__profiles, key=spotsGetter, reverse=True)
     
     for key in orderedKeys:
         #for every key, append the leaderboard info of that key
@@ -70,8 +69,23 @@ def showLeaderboard():
     outbound.sendChat(message)
     logging.info("Printed leaderboard")
 
-def getter(key):
+def showStreaks():
+    message = "Streaks\n"
+    #sort keys into descending order based on spots belonging to that key
+    orderedKeys = sorted(__profiles, key=streakGetter, reverse=True)
+    
+    for key in orderedKeys:
+        #for every key, append the streak info of that key
+        message += __profiles[key].streakInfo() + "\n"
+    
+    outbound.sendChat(message)
+    logging.info("Printed streaks")
+
+def spotsGetter(key):
     return __profiles[key].spots
+
+def streakGetter(key):
+    return __profiles[key].spotStreak
 
 def printUsage():
     outbound.sendChat(usageScript)
@@ -90,6 +104,13 @@ def getMentionsFromAttachments(attachments):
         if element["type"] == "mentions":
             return element["user_ids"] 
 
+
+def declareWinner():
+    pass
+
+def erase():
+    __profiles = dict()
+    writeBackup()
 
 def restoreFromBackup():
     print("Restoring from " + BACKUP_FILE_PATH)

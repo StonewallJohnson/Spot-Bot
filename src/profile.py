@@ -4,14 +4,17 @@ class Profile:
         self.alias = alias
         self.spotted = spotted
         self.spots = spots
+        self.spotStreak = 0
         
     def changeAlias(self, alias):
         self.alias = alias
     
     def spottedSomeone(self):
+        self.spotStreak += 1
         self.spots += 1
 
     def gotSpotted(self):
+        self.spotStreak = 0
         self.spotted += 1
 
     def getSpotRatio(self):
@@ -25,4 +28,8 @@ class Profile:
     
     def leaderboardInfo(self):
         return """{}
-        spots: {}   spotted: {}""".format(self.alias, self.spots, self.spotted)
+        spots: {}   spotted: {}   ratio: {:.2f}""".format(self.alias, self.spots, self.spotted, self.getSpotRatio())
+
+    def streakInfo(self):
+        return"""{}
+        spot streak: {}""".format(self.alias, self.spotStreak)
