@@ -14,6 +14,8 @@ reads the messages, then looks for any command sequences or spots and keeps trac
 
 **leaderboard**: shows registered members in descending order by spots
 
+**streaks**: shows the spot streak of registered members
+
 ### Spotting:
 In order to properly spot someone, the word 'Spotted' or 'spotted'
 must be present in the message and those who are spotted must be @.
