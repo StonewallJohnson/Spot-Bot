@@ -87,6 +87,9 @@ def spotsGetter(key):
 def streakGetter(key):
     return __profiles[key].spotStreak
 
+def netGetter(key):
+    return __profiles[key].getNetSpots()
+
 def printUsage():
     outbound.sendChat(usageScript)
 
@@ -106,7 +109,14 @@ def getMentionsFromAttachments(attachments):
 
 
 def declareWinner():
-    pass
+    orderedKeys = sorted(__profiles, key=netGetter, reverse=True)
+    winner = __profiles[orderedKeys[0]]
+    message = """The winner, by net spots is... {}
+    with {} net spots.
+    
+    Congratulations! Here is what the leaderboard looked like:""".format(winner.alias, winner.getNetSpots())
+    outbound.sendChat(message)
+    showLeaderboard()
 
 def erase():
     __profiles = dict()
