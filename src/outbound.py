@@ -1,7 +1,7 @@
 import requests
 import utility
 
-MAX_MESSAGE_SIZE = 600
+MAX_MESSAGE_SIZE = 990
 
 def sendChat(message):
     messageLen = len(message)
