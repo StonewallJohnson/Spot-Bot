@@ -11,46 +11,18 @@ __profiles = dict()
 BACKUP_FILE_PATH = "aux_file/backup.txt"
 BOT_ID = ""
 
-usageScript = """2Q]Z&tQaF(NsZ5e@`$fk)v%&#VP=I8
-\=J#6{5cm\Y[|fAsc%'n9A%8<;dkP 
-x^`JD7*&B$Md(t&p~t{L:{[9TRlH4,
-%y:/ i:KtyG}pzwOYjD0 D+aafS)H1
-`Iv@4E#{2_WA]S/0l2 _F`(A,e0}W2
-!#O/nuZ*C_zjlfW:$J8'Z9qhoFB6|)
-Le^ 4ch%o${VqYu$U/;0;<Kst]j!.E
-ZQ{>3`Qty_<%Q;,}m&~> 1mS):&a B
-_tA.fm@5 $SAR@ATLz=o2vRbJ%YgIl
-$5mN|$[XtOSV'zO$rIZtoWL$E_5Nr!
-I$1Cn ]A,gNjMJ626bv#8H$<9e&ca#
-(,tEKJs2o<u.Z+;{g6M?B:&qHME"GC
-I.dXKT3%~ve5?P5a{C-1Fm+"@fY4k-
-,EraLN@g@GK:~i_$>h,N@~w5>Vy[,L
-?l _/;J+k,[L!%Zydt5$}N(8( OL7)
-h-SkS~%r;zePL&tHH[nG*K boK%p0O
-"q&&U/V@zVsN`UfO'#+B54SSfQpy1B
-MuQo[&ME/w}X8`MjvAhFJi^'a]|2!W
-orhsSU-=sc82-=#zo"?}bIWhUbUeh>
-S!"'#N%^/0:=M*=B0p9a9j$^86jD0B
--pi/9;U<yiRkJmwX,)'I6(?6BK}6tg
-FKFz\BMKP0|!wLQre8n,gaIUxLeHdX
-lAejRkqnNBV)-!/9M$@5j2'q -;V'X
-gvWJH5i,<<l=GB4}&G%Fv}rqkdj*sT
-lI}XQe}eh)]2kCZJ<K\dz3Go<lj.gH
-D;5o;p3J"Y`@@B@{%v^v`&;C?G9>"E
-8bqN:4?%j?:B/bQfc3)!}!A7,p{27^
-6h%D<07v4e1a>^T5P9c2[zPD*4tffh
-7fK?x\*5*k;N21jv6{ !8$cQVL+^h:
-W'IiZF!$U1%Zy5qMQAFL6?PM7R~SB~
-aSS*R\hhlbk8;HoG|nL }W>n?lu&7=
-juG%n|vxYFD;@5G<.Gr$SvtEXE;:1H
-FMbznV|zMD*H}24S}mnLsh%PP]G$1J
-Pmr=qpht5KYRk< PR{Z&B.5{ Y[Wdp
-WzPe'3gR*:@rgzD`*0OzVa_6.E5=dq
-S}JlU8<M6qOA,qd#d;ccr(@$TBrs[v
-~iQq01g19rFr_zc6|D_2`8td #JN[h
-bX47CuuQ9b(t7~>d`+fQ8XT5x=)M-A
-;hdZr$]dVLgtcK!s2M.Z(Cc$d-%(_T
-iiBV;s0X:1,x ^A>9$nduUieq+)+1f"""
+usageScript = """Commands '!<>':
+usage: shows what each command does
+register: starts tracking when the sender is spotted or spots
+unregister: stops tracking when the sender is spotted or spots and removes all counts of spotting or being spotted
+members: shows who is registered
+leaderboard: shows registered members in descending order by spots
+streaks: shows the spot streak of registered members
+
+Spotting:
+In order to properly spot someone, the word 'Spotted' or 'spotted' must be present in the message and those who are spotted must be @.
+Both the spotter and the spotted must be registered in order for the spot to appear on the leaderboard.
+"""
 
 #Adds a new profile for the GroupMe member to the id and alias dicts
 def registerMember(id, alias, spotted = 0, spots = 0):
@@ -88,17 +60,35 @@ def spot(spotterID, spottedIDs):
 def showLeaderboard():
     message = "Leaderboard\n"
     #sort keys into descending order based on spots belonging to that key
-    orderedKeys = sorted(__profiles, key=getter, reverse=True)
+    orderedKeys = sorted(__profiles, key=spotsGetter, reverse=True)
     
     for key in orderedKeys:
-        #for every key, append the representation of that key
-        message += repr(__profiles[key]) + "\n"
+        #for every key, append the leaderboard info of that key
+        message += __profiles[key].leaderboardInfo() + "\n"
     
     outbound.sendChat(message)
     logging.info("Printed leaderboard")
 
-def getter(key):
+def showStreaks():
+    message = "Streaks\n"
+    #sort keys into descending order based on spots belonging to that key
+    orderedKeys = sorted(__profiles, key=streakGetter, reverse=True)
+    
+    for key in orderedKeys:
+        #for every key, append the streak info of that key
+        message += __profiles[key].streakInfo() + "\n"
+    
+    outbound.sendChat(message)
+    logging.info("Printed streaks")
+
+def spotsGetter(key):
     return __profiles[key].spots
+
+def streakGetter(key):
+    return __profiles[key].spotStreak
+
+def netGetter(key):
+    return __profiles[key].getNetSpots()
 
 def printUsage():
     outbound.sendChat(usageScript)
@@ -117,6 +107,20 @@ def getMentionsFromAttachments(attachments):
         if element["type"] == "mentions":
             return element["user_ids"] 
 
+
+def declareWinner():
+    orderedKeys = sorted(__profiles, key=netGetter, reverse=True)
+    winner = __profiles[orderedKeys[0]]
+    message = """The winner, by net spots is... {}
+    with {} net spots.
+    
+    Congratulations! Here is what the leaderboard looked like:""".format(winner.alias, winner.getNetSpots())
+    outbound.sendChat(message)
+    showLeaderboard()
+
+def erase():
+    __profiles = dict()
+    writeBackup()
 
 def restoreFromBackup():
     print("Restoring from " + BACKUP_FILE_PATH)

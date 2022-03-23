@@ -40,13 +40,45 @@ class ChatEndpoint(Resource):
         if nameChangeDetected(MessageSchema):
             utility.changeName(MessageSchema.text)
             
-        
+        if text.find("!streaks") != -1:
+            utility.showStreaks()
+
         return "returned", 200
 
-class BackupEndpoint(Resource):
+class ControlEndpoint(Resource):
     def get(self):
-        utility.writeBackup()
-        return "Backed up profiles", 200
+        return """Send me a post request that looks like:
+        {
+            "control_action" : <int>
+        }
+        control_action:
+            0: backup
+            1: server check
+            2: declare a winner
+            5: erase all data
+        """, 200
+
+    def post(self):
+        #Retrieve JSON sent with the post
+        message_json = request.get_json()
+        #Compose JSON into a marshmallow schema
+        MessageSchema = Schema.from_dict(message_json)
+        if MessageSchema.control_action == 0:
+            utility.writeBackup()
+            return "Backed up profiles", 200
+        
+        if MessageSchema.control_action == 1:
+            return "server is alive", 200
+
+        if MessageSchema.control_action == 2:
+            utility.declareWinner()
+            return "Winner declared", 200
+
+        if MessageSchema.control_action == 5:
+            utility.erase()
+            return "Members wiped and no backup", 200
+
+        return "Could not recognize request", 400
 
 def someoneSpotted(text, mentions):
     spotted = False
@@ -60,7 +92,7 @@ def nameChangeDetected(message):
     return message.sender_id == "system" and message.text.find("changed name to") != -1
 
 api.add_resource(ChatEndpoint, "/chat")
-api.add_resource(BackupEndpoint, "/back_me_up")
+api.add_resource(ControlEndpoint, "/control")
 
 ##ENTRYPOINT
 if __name__ == '__main__':
